@@ -91,8 +91,16 @@ public class GraphPanel
 
 
     public void addNode(Node<?, ?> node){
+        addNode(node, true);
+    }
+
+    public void addNode(Node<?, ?> node, boolean generateID){
+        if (node == null) return;
         NodeModel model = node.getModel();
-        model.setID(nextFreeID++);
+        if (generateID) {
+            while (nodes.containsKey(nextFreeID)) nextFreeID++;
+            model.setID(nextFreeID++);
+        }
         nodes.put(model.getID(), node);
         Component view = node.getView();
 
@@ -108,6 +116,7 @@ public class GraphPanel
     }
 
     public void removeNode(Node<?, ?> node){
+        if (node == null) return;
         long id = node.getModel().getID();
         nodes.remove(id);
         for (Edge<?> edge : edges.toArray(new Edge[0])){
@@ -119,16 +128,22 @@ public class GraphPanel
         repaint();
     }
 
+    public void removeNode(long id){
+        removeNode(nodes.get(id));
+    }
+
     public Collection<Node<?, ?>> getNodes(){
         return nodes.values();
     }
 
     public void addEdge(Edge<?> edge){
+        if (edge == null) return;
         edges.add(edge);
         repaint();
     }
 
     public void removeEdge(Edge<?> edge){
+        if (edge == null) return;
         edges.remove(edge);
         repaint();
     }
@@ -137,4 +152,7 @@ public class GraphPanel
         return edges;
     }
 
+    public Node<?, ?> getNode(long from) {
+        return nodes.get(from);
+    }
 }

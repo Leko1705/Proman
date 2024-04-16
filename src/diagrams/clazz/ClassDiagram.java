@@ -3,11 +3,15 @@ package diagrams.clazz;
 import context.Context;
 import diagram.Diagram;
 import diagram.store.DiagramData;
+import diagrams.clazz.graph.edge.Connection;
+import diagrams.clazz.graph.node.*;
+import mylib.format.Content;
 import utils.ProxyPanel;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
+import java.util.List;
 
 public class ClassDiagram extends Diagram<Void> {
 
@@ -31,7 +35,94 @@ public class ClassDiagram extends Diagram<Void> {
         DiagramManager manager =
                 new DiagramManager(getPath(), this, data, graphPanel, proxyPanel, splitPane);
         manager.foldInProperties();
+
+        loadData(data, graphPanel);
     }
+
+    private void loadData(DiagramData data, DiagramViewPanel graph){
+        List<Content> subContent = data.getSubContent("diagram", "content");
+        for (Content content : subContent) {
+            String rootName = content.getRootName();
+
+            if (rootName.startsWith("class")) {
+                long id = Long.parseLong((String) content.get(rootName, "id"));
+                String type = (String) content.get(rootName, "type");
+                String name = (String) content.get(rootName, "name");
+                int x = Integer.parseInt((String) content.get(rootName, "pos", "x"));
+                int y = Integer.parseInt((String) content.get(rootName, "pos", "y"));
+                ClassNode classNode = graph.createClassNode(ClassType.fromTextFormat(type), name);
+                classNode.setID(id);
+                classNode.setLocation(x, y);
+
+                List<Content> classContent = content.getSubContent(rootName);
+                for (Content member : classContent){
+                    rootName = member.getRootName();
+
+                    if (rootName.startsWith("attribute")){
+                        type = (String) member.get(rootName, "type");
+                        name = (String) member.get(rootName, "name");
+                        String visibility = (String) member.get(rootName, "visibility");
+                        boolean getter = Boolean.parseBoolean((String) content.get(rootName, "getter"));
+                        boolean setter = Boolean.parseBoolean((String) content.get(rootName, "setter"));
+                        boolean isStatic = Boolean.parseBoolean((String) content.get(rootName, "static"));
+
+                        Attribute attribute = new Attribute(Visibility.fromTextFormat(visibility), type, name);
+                        attribute.setGetter(getter);
+                        attribute.setSetter(setter);
+                        attribute.setStatic(isStatic);
+
+                        classNode.getAttributes().add(attribute);
+                    }
+
+                    else if (rootName.startsWith("method")){
+                        type = (String) member.get(rootName, "type");
+                        name = (String) member.get(rootName, "name");
+                        String visibility = (String) member.get(rootName, "visibility");
+                        boolean isStatic = Boolean.parseBoolean((String) content.get(rootName, "static"));
+                        boolean isAbstract = Boolean.parseBoolean((String) content.get(rootName, "abstract"));
+
+                        Method method = new Method(Visibility.fromTextFormat(visibility), type, name);
+                        method.setStatic(isStatic);
+                        method.setAbstract(isAbstract);
+
+                        List<Content> parameterContent = member.getSubContent(rootName);
+                        for (Content parameter : parameterContent){
+
+                            rootName = parameter.getRootName();
+                            if (rootName.startsWith("parameter")){
+                                type = (String) parameter.get(rootName, "type");
+                                name = (String) parameter.get(rootName, "name");
+                                method.getParameters().add(new Parameter(type, name));
+                            }
+                        }
+
+                        classNode.getMethods().add(method);
+                    }
+                }
+
+                graph.addNode(classNode, false);
+            }
+
+            else if (rootName.startsWith("edge")){
+                long from = Long.parseLong((String) content.get(rootName, "from"));
+                long to = Long.parseLong((String) content.get(rootName, "to"));
+                String left = (String) content.get(rootName, "left");
+                String center = (String) content.get(rootName, "center");
+                String right = (String) content.get(rootName, "right");
+                int styleIndex = Integer.parseInt((String) content.get(rootName, "style"));
+
+                Connection connection = new Connection(graph.getNode(from), graph.getNode(to), EdgePropertyPanel.styles.get(styleIndex));
+                connection.setLeftText(left);
+                connection.setCenterText(center);
+                connection.setRightText(right);
+                connection.setStyleIndex(styleIndex);
+
+                graph.addConnection(connection);
+            }
+
+        }
+    }
+
 
     @Override
     public void installPopUpMenu(JPopupMenu menu) {

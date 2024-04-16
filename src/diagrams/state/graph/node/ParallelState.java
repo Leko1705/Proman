@@ -1,5 +1,6 @@
 package diagrams.state.graph.node;
 
+import diagrams.utils.BaseNode;
 import graph.NodeModel;
 import mvc.IView;
 import utils.GeomUtils;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class ParallelState
         extends JInternalFrame
-        implements StateNode<ParallelState, ParallelState>, NodeModel, IView, SwingConstants {
+        implements BaseNode<ParallelState, ParallelState>, NodeModel, IView, SwingConstants {
 
     private long id;
 

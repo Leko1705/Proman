@@ -1,6 +1,5 @@
-package diagrams.state.graph.edge;
+package diagrams.utils;
 
-import diagrams.state.graph.node.StateNode;
 import graph.OpenArrow;
 import graph.PlainLine;
 import graph.*;
@@ -17,21 +16,21 @@ public class Transition
 
     private static final int LINE_CLICK_BOUNDS = 12;
 
-    private final StateNode<?, ?> from, to;
+    private final BaseNode<?, ?> from, to;
 
     private String text = "";
 
-    public Transition(StateNode<?, ?> from, StateNode<?, ?> to) {
+    public Transition(BaseNode<?, ?> from, BaseNode<?, ?> to) {
         super(null, null);
         this.from = from;
         this.to = to;
     }
 
-    public StateNode<?, ?> getFrom() {
+    public BaseNode<?, ?> getFrom() {
         return from;
     }
 
-    public StateNode<?, ?> getTo() {
+    public BaseNode<?, ?> getTo() {
         return to;
     }
 

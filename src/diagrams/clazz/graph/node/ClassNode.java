@@ -46,7 +46,8 @@ public class ClassNode
             }
 
             Container container = getParent();
-            container.repaint();
+            if (container != null)
+                container.repaint();
             repaint();
         };
 

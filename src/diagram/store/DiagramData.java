@@ -13,6 +13,11 @@ public class DiagramData implements Content {
     }
 
     @Override
+    public String getRootName() {
+        return content.getRootName();
+    }
+
+    @Override
     public Object get(String... path) {
         return content.get(path);
     }

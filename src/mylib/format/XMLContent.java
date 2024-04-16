@@ -8,7 +8,6 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -19,6 +18,11 @@ import java.util.List;
 import java.util.Objects;
 
 public record XMLContent(Document document) implements Content {
+
+    @Override
+    public String getRootName() {
+        return document.getDocumentElement().getNodeName();
+    }
 
     @Override
     public Object get(String... path) {
@@ -137,9 +141,8 @@ public record XMLContent(Document document) implements Content {
     public String toString() {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-            // initialize StreamResult with File object to save to file
+            //transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            //transformer.setOutputProperty("{https://xml.apache.org/xslt}indent-amount", "2");
             StreamResult result = new StreamResult(new StringWriter());
             DOMSource source = new DOMSource(document);
             transformer.transform(source, result);

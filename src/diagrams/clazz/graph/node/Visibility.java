@@ -21,4 +21,13 @@ public enum Visibility {
         return textFormat;
     }
 
+    public static Visibility fromTextFormat(String textFormat) {
+        for (Visibility visibility : Visibility.values()) {
+            if (textFormat.equals(visibility.toString())) {
+                return visibility;
+            }
+        }
+        return null;
+    }
+
 }

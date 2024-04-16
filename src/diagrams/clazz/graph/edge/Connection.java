@@ -22,6 +22,8 @@ public class Connection
 
     private EdgeStyle style;
 
+    private int styleIndex;
+
     private String centerText = "";
 
     private String leftText = "";
@@ -39,7 +41,14 @@ public class Connection
     public void setStyle(EdgeStyle style) {
         this.style = Objects.requireNonNull(style);
         notifyListeners();
+    }
 
+    public void setStyleIndex(int styleIndex) {
+        this.styleIndex = styleIndex;
+    }
+
+    public int getStyleIndex() {
+        return styleIndex;
     }
 
     public EdgeStyle getStyle() {

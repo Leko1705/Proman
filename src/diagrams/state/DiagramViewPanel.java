@@ -1,63 +1,36 @@
 package diagrams.state;
 
-import diagrams.state.graph.edge.Transition;
+import diagrams.utils.*;
 import diagrams.state.graph.node.*;
 import graph.Edge;
-import graph.GraphPanel;
-import graph.PointNode;
+import graph.Node;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class DiagramViewPanel extends GraphPanel {
+public class DiagramViewPanel extends GraphEditorPanel {
 
-    private final MousePointNode MOUSE_POINT_END = new MousePointNode();
 
-    private Transition processedConnection = null;
-
-    private boolean lineClicked = false;
-
-    public DiagramViewPanel() {
-        addNode(MOUSE_POINT_END);
-
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                if (SwingUtilities.isRightMouseButton(e) && !lineClicked) {
-                    new RightClickPopUpMenu(e).show(e.getComponent(), e.getX(), e.getY());
-                }
-
-                if (processedConnection != null)
-                    removeEdge(processedConnection);
-                processedConnection = null;
-                KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
-                lineClicked = false;
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
-            }
-        });
-
-        addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                MOUSE_POINT_END.setLocation(e.getPoint());
-                repaint();
-            }
-        });
-
-        addEdgeClickListener((edge, e) -> {
-            if (SwingUtilities.isRightMouseButton(e)){
-                lineClicked = true;
-                new EdgePopUpMenu((Transition) edge).show(e.getComponent(), e.getX(), e.getY());
-            }
-        });
+    @Override
+    public void onDiagramRightClick(MouseEvent e) {
+        new RightClickPopUpMenu(e).show(e.getComponent(), e.getX(), e.getY());
     }
+
+    @Override
+    public void onNodeRightClicked(Node<?, ?> node, MouseEvent e) {
+        new NodePopUpMenu((BaseNode<?, ?>) node).show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    @Override
+    public void onEdgeRightClicked(Edge<?> edge, MouseEvent e) {
+        new EdgePopUpMenu((Transition) edge).show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    @Override
+    public Edge<?> onNewConnectionEstablished(Node<?, ?> from, Node<?, ?> to) {
+        return new Transition((BaseNode<?, ?>) from, (BaseNode<?, ?>) to);
+    }
+
 
 
     private class RightClickPopUpMenu extends JPopupMenu {
@@ -99,32 +72,12 @@ public class DiagramViewPanel extends GraphPanel {
             return spinner;
         }
 
-        private void addComponent(StateNode<?, ?> node, MouseEvent e) {
+        private void addComponent(BaseNode<?, ?> node, MouseEvent e) {
             node.getView().setLocation(e.getX(), e.getY());
             if (node instanceof JInternalFrame frame){
                 frame.setSize(250, 200);
             }
-            applyComponentSpecs(node);
             addNode(node);
-        }
-
-        private void applyComponentSpecs(StateNode<?, ?> node) {
-            node.getView().addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (SwingUtilities.isRightMouseButton(e)) {
-                        new NodePopUpMenu(node).show(e.getComponent(), e.getX(), e.getY());
-                    }
-                    else {
-                        if (processedConnection != null){
-                            removeEdge(processedConnection);
-                            Transition transition = new Transition(processedConnection.getFrom(), node);
-                            addEdge(transition);
-                            processedConnection = null;
-                        }
-                    }
-                }
-            });
         }
     }
 
@@ -132,12 +85,9 @@ public class DiagramViewPanel extends GraphPanel {
 
     private class NodePopUpMenu extends JPopupMenu {
 
-        public NodePopUpMenu(StateNode<?, ?> node) {
+        public NodePopUpMenu(BaseNode<?, ?> node) {
             JMenuItem connectItem = new JMenuItem("connect");
-            connectItem.addActionListener(e -> {
-                processedConnection = new Transition(node, MOUSE_POINT_END);
-                addEdge(processedConnection);
-            });
+            connectItem.addActionListener(e -> startConnectionProcess(new Transition(node, MOUSE_POINT_END)));
             add(connectItem);
 
             if (node instanceof JInternalFrame frame){
@@ -180,6 +130,7 @@ public class DiagramViewPanel extends GraphPanel {
         }
     }
 
+
     private class EdgePopUpMenu extends JPopupMenu {
 
         public EdgePopUpMenu(Transition edge) {
@@ -196,16 +147,6 @@ public class DiagramViewPanel extends GraphPanel {
             JMenuItem removeItem = new JMenuItem("remove");
             removeItem.addActionListener(e -> removeEdge(edge));
             add(removeItem);
-        }
-    }
-
-
-    private static class MousePointNode
-            extends PointNode
-            implements StateNode<PointNode, PointNode> {
-        @Override
-        public Point getNearestPointOnOutline(Point to) {
-            return getLocation();
         }
     }
 

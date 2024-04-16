@@ -112,7 +112,7 @@ public class DiagramViewPanel extends GraphPanel {
     }
 
 
-    private ClassNode createClassNode(ClassType type, String name){
+    public ClassNode createClassNode(ClassType type, String name){
         ClassNode classNode = new ClassNode(type, name);
 
         classNode.addMouseListener(new MouseAdapter() {
@@ -134,12 +134,7 @@ public class DiagramViewPanel extends GraphPanel {
                     }
 
                     Connection connection = new Connection(processedConnection.getFrom(), classNode, processedConnection.getStyle());
-                    addEdge(connection);
-                    SwingUtilities.invokeLater(() -> {
-                        manager.setSideBar(new EdgePropertyPanel(connection, manager));
-                        manager.foldOutProperties();
-                    });
-                    connection.addEdgeChangeListener(ON_EDGE_CHANGE);
+                    addConnection(connection);
                     removeEdge(processedConnection);
                     processedConnection = null;
                 }
@@ -201,6 +196,15 @@ public class DiagramViewPanel extends GraphPanel {
         });
 
         return classNode;
+    }
+
+    public void addConnection(Connection connection){
+        addEdge(connection);
+        SwingUtilities.invokeLater(() -> {
+            manager.setSideBar(new EdgePropertyPanel(connection, manager));
+            manager.foldOutProperties();
+        });
+        connection.addEdgeChangeListener(ON_EDGE_CHANGE);
     }
 
 

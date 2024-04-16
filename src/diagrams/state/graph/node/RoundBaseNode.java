@@ -1,16 +1,17 @@
 package diagrams.state.graph.node;
 
 import diagrams.state.StateDiagramConstants;
+import diagrams.utils.BaseNode;
 import graph.TextNode;
 import utils.GeomUtils;
 
 import java.awt.*;
 
-public abstract class RoundStateNode
+public abstract class RoundBaseNode
         extends TextNode
-        implements StateNode<TextNode, TextNode> {
+        implements BaseNode<TextNode, TextNode> {
 
-    public RoundStateNode(){
+    public RoundBaseNode(){
         setLayout(new BorderLayout());
         setSize(StateDiagramConstants.CIRCLE_COMPONENT_SIZE, StateDiagramConstants.CIRCLE_COMPONENT_SIZE);
         setForeground(Color.WHITE);

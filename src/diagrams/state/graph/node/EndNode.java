@@ -1,11 +1,8 @@
 package diagrams.state.graph.node;
 
-import diagrams.state.StateDiagramConstants;
-import graph.TextNode;
-
 import java.awt.*;
 
-public class EndNode extends RoundStateNode {
+public class EndNode extends RoundBaseNode {
 
     @Override
     public void paintComponent(Graphics g) {

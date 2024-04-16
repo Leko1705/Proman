@@ -1,5 +1,6 @@
 package diagram;
 
+import diagrams.flow.FlowchartDiagramFactory;
 import diagrams.clazz.UMLClassDiagramFactory;
 import diagrams.state.UMLStateDiagramFactory;
 
@@ -21,12 +22,15 @@ public final class Diagrams {
 
     public static final String KEY_UML_CLASS_DIAGRAM = "uml.class.diagram";
     public static final String KEY_UML_STATE_DIAGRAM = "uml.state.diagram";
+    public static final String KEY_SEQUENCE_DIAGRAM = "sequence.diagram";
+    public static final String KEY_FLOW_CHART = "flow.chart.diagram";
 
 
 
     private static void init(){
         addDiagramFactory(KEY_UML_CLASS_DIAGRAM, new UMLClassDiagramFactory());
         addDiagramFactory(KEY_UML_STATE_DIAGRAM, new UMLStateDiagramFactory());
+        addDiagramFactory(KEY_FLOW_CHART, new FlowchartDiagramFactory());
     }
 
     private Diagrams(){

@@ -23,7 +23,7 @@ public class EdgePropertyPanel
             R.loadImage("composition.png"),
     };
 
-    private static final List<EdgeStyle> styles = List.of(
+    public static final List<EdgeStyle> styles = List.of(
             new PlainLine(),
             new OpenArrow(new PlainLine()),
             new OutlineArrow(new PlainLine()),
@@ -53,11 +53,11 @@ public class EdgePropertyPanel
         comboBox.setBackground(Color.WHITE);
         comboBox.addActionListener(e -> {
             connection.setStyle(styles.get(comboBox.getSelectedIndex()));
+            connection.setStyleIndex(comboBox.getSelectedIndex());
             KeyboardFocusManager.getCurrentKeyboardFocusManager().clearFocusOwner();
         });
 
-        int index = styles.indexOf(connection.getStyle());
-        comboBox.setSelectedIndex(Math.max(0, index));
+        comboBox.setSelectedIndex(Math.max(0, connection.getStyleIndex()));
 
         add(comboBox, BorderLayout.NORTH);
 

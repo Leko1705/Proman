@@ -2,10 +2,12 @@ package diagrams.clazz;
 
 import diagram.Diagram;
 import diagram.store.DiagramData;
+import diagrams.clazz.graph.edge.Connection;
 import diagrams.clazz.graph.node.Attribute;
 import diagrams.clazz.graph.node.ClassNode;
 import diagrams.clazz.graph.node.Method;
 import diagrams.clazz.graph.node.Parameter;
+import graph.Edge;
 import graph.GraphPanel;
 import graph.Node;
 import mylib.format.Content;
@@ -86,15 +88,18 @@ public class DiagramManager {
                     data.set(cNode.getClassType().getTextFormat(), "diagram", "content", classTag, "type");
                     data.set(cNode.getClassName(), "diagram", "content", classTag, "name");
 
+                    data.set(cNode.getX(), "diagram", "content", classTag, "pos", "x");
+                    data.set(cNode.getY(), "diagram", "content", classTag, "pos", "y");
+
                     int i = 0;
                     for (Attribute attribute : cNode.getAttributes()) {
                         String attributeTag = "attribute_" + i++;
                         data.set(attribute.getType(), "diagram", "content", classTag, attributeTag, "type");
                         data.set(attribute.getName(), "diagram", "content", classTag, attributeTag, "name");
-                        data.set(attribute.getVisibility().getTextFormat(), "diagram", "content", classTag, attributeTag, "visibility");
-                        data.set(attribute.hasGetter(), "diagram", "content", classTag, attributeTag, "getter");
-                        data.set(attribute.hasSetter(), "diagram", "content", classTag, attributeTag, "setter");
-                        data.set(attribute.isStatic(), "diagram", "content", classTag, attributeTag, "static");
+                        data.set(attribute.getVisibility().toString(), "diagram", "content", classTag, attributeTag, "visibility");
+                        data.set(Boolean.toString(attribute.hasGetter()), "diagram", "content", classTag, attributeTag, "getter");
+                        data.set(Boolean.toString(attribute.hasSetter()), "diagram", "content", classTag, attributeTag, "setter");
+                        data.set(Boolean.toString(attribute.isStatic()), "diagram", "content", classTag, attributeTag, "static");
                     }
 
                     i = 0;
@@ -104,8 +109,8 @@ public class DiagramManager {
                         data.set(method.getType(), "diagram", "content", classTag, methodTag, "type");
                         data.set(method.getName(), "diagram", "content", classTag, methodTag, "name");
                         data.set(method.getVisibility().toString(), "diagram", "content", classTag, methodTag, "visibility");
-                        data.set(method.isStatic(), "diagram", "content", classTag, methodTag, "static");
-                        data.set(method.isAbstract(), "diagram", "content", classTag, methodTag, "abstract");
+                        data.set(Boolean.toString(method.isStatic()), "diagram", "content", classTag, methodTag, "static");
+                        data.set(Boolean.toString(method.isAbstract()), "diagram", "content", classTag, methodTag, "abstract");
 
                         int j = 0;
                         for (Parameter parameter : method.getParameters()) {
@@ -118,7 +123,25 @@ public class DiagramManager {
                 }
             }
 
+            n = 0;
+            for (Edge<?> edge : graphPanel.getEdges()) {
+                String edgeTag = "edge_" + n++;
+                Connection connection = (Connection) edge;
+                data.set(connection.getFrom().getModel().getID(), "diagram", "content", edgeTag, "from");
+                data.set(connection.getTo().getModel().getID(), "diagram", "content", edgeTag, "to");
+                data.set(connection.getLeftText(), "diagram", "content", edgeTag, "left");
+                data.set(connection.getCenterText(), "diagram", "content", edgeTag, "center");
+                data.set(connection.getRightText(), "diagram", "content", edgeTag, "right");
+                data.set(connection.getStyleIndex(), "diagram", "content", edgeTag, "style");
+            }
+
             // System.out.println(data);
+
+            try {
+                format.write(path, data.getContent());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
         });
     }

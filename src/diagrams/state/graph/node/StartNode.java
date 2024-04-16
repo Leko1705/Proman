@@ -2,7 +2,7 @@ package diagrams.state.graph.node;
 
 import java.awt.*;
 
-public class StartNode extends RoundStateNode {
+public class StartNode extends RoundBaseNode {
 
     @Override
     public void paintComponent(Graphics g) {

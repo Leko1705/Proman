@@ -4,6 +4,8 @@ import java.util.List;
 
 public interface Content {
 
+    String getRootName();
+
     Object get(String... path);
 
     void set(Object o, String... path);

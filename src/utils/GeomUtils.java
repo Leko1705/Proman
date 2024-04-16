@@ -80,6 +80,10 @@ public final class GeomUtils {
         g.drawString(s, halfX, halfY);
     }
 
+    public static double euclideanDistance(Point p, Point q){
+        return Math.sqrt(Math.pow(q.x - p.x, 2) + Math.pow(p.y - q.y, 2));
+    }
+
     public static double calcAngle(Point p, Point q){
         return Math.toDegrees(Math.atan2(q.y - p.y, q.x - p.x));
     }
