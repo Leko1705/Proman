@@ -13,7 +13,7 @@ public class DiagramTabPanel extends JTabbedPane {
     private final Map<String, CloseButtonTab> opened = new HashMap<>();
 
     public void addTab(String title, Icon icon, Component component) {
-        if (opened.containsKey(title)){
+        if (isOpen(title)){
             setSelectedComponent(opened.get(title).component);
             return;
         }
@@ -25,6 +25,13 @@ public class DiagramTabPanel extends JTabbedPane {
         setSelectedComponent(component);
     }
 
+    public boolean isOpen(String title) {
+        return opened.containsKey(title);
+    }
+
+    public Diagram<?> getOpened(String title) {
+        return (Diagram<?>) opened.get(title).component;
+    }
 
     public class CloseButtonTab extends JPanel {
         public Component component;

@@ -86,7 +86,18 @@ public class Attribute
 
     @Override
     public String getText() {
-        return visibility.getTextFormat() + name + ": " + type;
+        String text = visibility.getTextFormat() + name + ": " + type;
+        if (hasGetter){
+            text += "{get;";
+            if (hasSetter) {
+                text += "set;";
+            }
+            text += "}";
+        }
+        else if (hasSetter) {
+            text += "{set;}";
+        }
+        return text;
     }
 
 }

@@ -1,6 +1,11 @@
 package diagram;
 
 import context.Context;
+import export.DiagExporter;
+import export.Exporter;
+import export.PNGExporter;
+import image.DefaultImageProvider;
+import image.ImageProvider;
 import mylib.format.Content;
 import diagram.store.DiagramData;
 import mylib.format.Format;
@@ -83,9 +88,7 @@ public class DiagramCell extends JPanel {
         Diagram<?> diagram = factory.createEmptyDiagram(context, diagramData.getVersion());
         diagram.setPath(path);
         diagram.onCreate(diagramData);
-        ((SimpleProject)context).open(
-                new DiagramOpenIntent(diagram, FileManager.getManager().getFileName(path, false), factory.getIcon())
-        );
+        openDiagram(diagram, factory);
     }
 
 
@@ -106,12 +109,66 @@ public class DiagramCell extends JPanel {
             });
             add(renameItem);
 
+
             DiagramFactory factory = getDiagramFactory();
             DiagramData diagramData = getDiagramData();
             Diagram<?> diagram = factory.createEmptyDiagram(context, diagramData.getVersion());
+
+            JMenu exportMenu = getExportMenu(diagram, factory, diagramData);
+            add(exportMenu);
+
             diagram.installPopUpMenu(this);
         }
 
+        private JMenu getExportMenu(Diagram<?> diagram, DiagramFactory factory, DiagramData diagramData) {
+            JMenu exportMenu = new JMenu("export");
+
+            JMenuItem asPng = new JMenuItem("as png");
+            asPng.addActionListener(e -> SwingUtilities.invokeLater(() -> {
+                Diagram<?> exportableDiagram = getOpened(diagram, factory, diagramData);
+                SwingUtilities.invokeLater(()
+                        -> exportImage(exportableDiagram.getExportableComponent(), new PNGExporter()));
+            }));
+            exportMenu.add(asPng);
+
+            JMenuItem asDiag = new JMenuItem("as diag");
+            asDiag.addActionListener(e -> {
+                Exporter<Path> diagExporter = new DiagExporter();
+                diagExporter.export(context, path);
+            });
+            exportMenu.add(asDiag);
+            return exportMenu;
+        }
+
+    }
+
+    private Diagram<?> getOpened(Diagram<?> diagram, DiagramFactory factory, DiagramData data){
+        Diagram<?> mutableDiagram;
+        SimpleProject project = (SimpleProject) context;
+        String name = FileManager.getManager().getFileName(path, false);
+        if (project.isOpen(name))
+            mutableDiagram = project.getOpenDiagram(name);
+        else {
+            mutableDiagram = diagram;
+            diagram.setPath(path);
+            diagram.onCreate(data);
+            openDiagram(diagram, factory);
+        }
+
+        return mutableDiagram;
+    }
+
+    private void exportImage(Component component, Exporter<Image> exporter){
+        ImageProvider imageProvider = new DefaultImageProvider();
+        Image image = imageProvider.provide(component);
+
+        exporter.export(context, image);
+    }
+
+    private void openDiagram(Diagram<?> diagram, DiagramFactory factory){
+        ((SimpleProject)context).open(
+                new DiagramOpenIntent(diagram, FileManager.getManager().getFileName(path, false), factory.getIcon())
+        );
     }
 
 }

@@ -18,7 +18,6 @@ public class MainFrame extends JFrame {
 
     private void init(){
         setIconImage(Resources.getApplicationIcon());
-
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) screenSize.getWidth();
         int height = (int) screenSize.getHeight();

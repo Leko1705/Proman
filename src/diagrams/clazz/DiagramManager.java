@@ -52,6 +52,13 @@ public class DiagramManager {
     }
 
     public void setSideBar(JPanel sideBarPanel){
+        if (sideBarPanel instanceof ClassNodePropertyPanel p1){
+            if (proxyPanel.get() instanceof  ClassNodePropertyPanel p2){
+                if (p1.getClassNode().getID() == p2.getClassNode().getID()){
+                    return;
+                }
+            }
+        }
         proxyPanel.set(sideBarPanel);
     }
 
@@ -90,6 +97,8 @@ public class DiagramManager {
 
                     data.set(cNode.getX(), "diagram", "content", classTag, "pos", "x");
                     data.set(cNode.getY(), "diagram", "content", classTag, "pos", "y");
+
+                    data.set(cNode.getDescription(), "diagram", "content", classTag, "desc");
 
                     int i = 0;
                     for (Attribute attribute : cNode.getAttributes()) {

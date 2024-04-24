@@ -25,6 +25,10 @@ public class ProxyPanel extends BaseContext<JPanel, JPanel> {
             add(current = panel, BorderLayout.CENTER);
     }
 
+    public JPanel get(){
+        return current;
+    }
+
     @Override
     public void onCreate(JPanel initializer) {
         setLayout(new BorderLayout());

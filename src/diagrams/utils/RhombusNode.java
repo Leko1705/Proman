@@ -1,6 +1,5 @@
-package diagrams.flow.graph.node;
+package diagrams.utils;
 
-import diagrams.utils.BaseNode;
 import graph.TextNode;
 import utils.GeomUtils;
 
@@ -12,7 +11,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class BranchNode
+public class RhombusNode
         extends TextNode
         implements BaseNode<TextNode, TextNode>, SwingConstants {
 
@@ -23,7 +22,7 @@ public class BranchNode
             new MousePointNode(),
     };
 
-    public BranchNode() {
+    public RhombusNode() {
         setSize(150, 100);
         setOpaque(false);
 

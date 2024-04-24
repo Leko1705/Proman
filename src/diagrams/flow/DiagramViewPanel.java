@@ -55,7 +55,7 @@ public class DiagramViewPanel extends GraphEditorPanel {
 
             JMenuItem branchItem = new JMenuItem("branch");
             branchItem.addActionListener(e -> {
-                BranchNode branchNode = new BranchNode();
+                RhombusNode branchNode = new RhombusNode();
                 addComponent(branchNode, mouseEvent);
                 addNode(branchNode.getConnector(SwingConstants.WEST));
                 addNode(branchNode.getConnector(SwingConstants.EAST));
@@ -78,7 +78,7 @@ public class DiagramViewPanel extends GraphEditorPanel {
 
         public NodePopUpMenu(BaseNode<?, ?> node) {
 
-            if (!(node instanceof BranchNode branchNode)) {
+            if (!(node instanceof RhombusNode branchNode)) {
                 JMenuItem connectItem = new JMenuItem("connect");
                 connectItem.addActionListener(e -> startConnectionProcess(new Transition(node, MOUSE_POINT_END)));
                 add(connectItem);
@@ -87,19 +87,19 @@ public class DiagramViewPanel extends GraphEditorPanel {
                 JMenu connectMenu = new JMenu("connect");
 
                 JMenuItem westItem = new JMenuItem("west");
-                westItem.addActionListener(e -> startConnectionProcess(new Transition(branchNode.getConnector(BranchNode.WEST), MOUSE_POINT_END)));
+                westItem.addActionListener(e -> startConnectionProcess(new Transition(branchNode.getConnector(RhombusNode.WEST), MOUSE_POINT_END)));
                 connectMenu.add(westItem);
 
                 JMenuItem eastItem = new JMenuItem("east");
-                eastItem.addActionListener(e -> startConnectionProcess(new Transition(branchNode.getConnector(BranchNode.EAST), MOUSE_POINT_END)));
+                eastItem.addActionListener(e -> startConnectionProcess(new Transition(branchNode.getConnector(RhombusNode.EAST), MOUSE_POINT_END)));
                 connectMenu.add(eastItem);
 
                 JMenuItem northItem = new JMenuItem("north");
-                northItem.addActionListener(e -> startConnectionProcess(new Transition(branchNode.getConnector(BranchNode.NORTH), MOUSE_POINT_END)));
+                northItem.addActionListener(e -> startConnectionProcess(new Transition(branchNode.getConnector(RhombusNode.NORTH), MOUSE_POINT_END)));
                 connectMenu.add(northItem);
 
                 JMenuItem southItem = new JMenuItem("south");
-                southItem.addActionListener(e -> startConnectionProcess(new Transition(branchNode.getConnector(BranchNode.SOUTH), MOUSE_POINT_END)));
+                southItem.addActionListener(e -> startConnectionProcess(new Transition(branchNode.getConnector(RhombusNode.SOUTH), MOUSE_POINT_END)));
                 connectMenu.add(southItem);
 
                 add(connectMenu);
@@ -108,7 +108,7 @@ public class DiagramViewPanel extends GraphEditorPanel {
             JMenuItem removeItem = new JMenuItem("remove");
             removeItem.addActionListener(e -> {
                 removeNode(node);
-                if (node instanceof BranchNode branchNode){
+                if (node instanceof RhombusNode branchNode){
                     removeNode(branchNode.getConnector(SwingConstants.WEST));
                     removeNode(branchNode.getConnector(SwingConstants.EAST));
                     removeNode(branchNode.getConnector(SwingConstants.SOUTH));

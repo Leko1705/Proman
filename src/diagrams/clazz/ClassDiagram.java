@@ -15,6 +15,8 @@ import java.util.List;
 
 public class ClassDiagram extends Diagram<Void> {
 
+    private Component exportableComponent;
+
     protected ClassDiagram(Context<?, ?> context) {
         super(context);
     }
@@ -24,6 +26,7 @@ public class ClassDiagram extends Diagram<Void> {
         setLayout(new BorderLayout());
 
         DiagramViewPanel graphPanel = new DiagramViewPanel();
+        exportableComponent = graphPanel;
         ProxyPanel proxyPanel = new ProxyPanel(this);
 
         JSplitPane splitPane = new JSplitPane();
@@ -39,6 +42,11 @@ public class ClassDiagram extends Diagram<Void> {
         loadData(data, graphPanel);
     }
 
+    @Override
+    public Component getExportableComponent() {
+        return exportableComponent;
+    }
+
     private void loadData(DiagramData data, DiagramViewPanel graph){
         List<Content> subContent = data.getSubContent("diagram", "content");
         for (Content content : subContent) {
@@ -50,9 +58,12 @@ public class ClassDiagram extends Diagram<Void> {
                 String name = (String) content.get(rootName, "name");
                 int x = Integer.parseInt((String) content.get(rootName, "pos", "x"));
                 int y = Integer.parseInt((String) content.get(rootName, "pos", "y"));
+                String description = (String) content.get(rootName, "desc");
+
                 ClassNode classNode = graph.createClassNode(ClassType.fromTextFormat(type), name);
                 classNode.setID(id);
                 classNode.setLocation(x, y);
+                classNode.setDescription(description);
 
                 List<Content> classContent = content.getSubContent(rootName);
                 for (Content member : classContent){
@@ -194,7 +205,6 @@ public class ClassDiagram extends Diagram<Void> {
                         In order to cancel the connection process simply click <br>
                         on some free space.
                     </p>
-                    
                 </html>
                 """;
 

@@ -44,6 +44,12 @@ public class ClassNodePropertyPanel
             attributes.add(new AttributeSpecs(attributes, attribute, classNode));
         for (Method method : classNode.getMethods())
             methods.add(new MethodSpecs(methods, method, classNode));
+
+        description.setText(classNode.getDescription());
+    }
+
+    public ClassNode getClassNode() {
+        return classNode;
     }
 
     private void initTops(){
@@ -164,7 +170,7 @@ public class ClassNodePropertyPanel
         }
         private void update(){
         String desc = description.getText();
-        // TODO update description
+        classNode.setDescription(desc);
         }
     }
 

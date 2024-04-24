@@ -46,6 +46,14 @@ public class SimpleProject extends Project<DiagramOpenIntent> {
         diagramTabbedPane.addTab(intent.title(), intent.icon(), intent.diagram());
     }
 
+    public boolean isOpen(String title){
+        return diagramTabbedPane.isOpen(title);
+    }
+
+    public Diagram<?> getOpenDiagram(String title){
+        return diagramTabbedPane.getOpened(title);
+    }
+
     private void setUpGUI(){
         setLayout(new BorderLayout());
 

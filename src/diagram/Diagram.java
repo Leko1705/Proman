@@ -6,6 +6,7 @@ import diagram.store.BackgroundService;
 import diagram.store.DiagramData;
 
 import javax.swing.*;
+import java.awt.*;
 import java.nio.file.Path;
 import java.util.Deque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -19,6 +20,10 @@ public abstract class Diagram<V> extends BaseContext<DiagramData, V> {
     }
 
     public abstract void onCreate(DiagramData data);
+
+    public Component getExportableComponent(){
+        return this;
+    }
 
     protected void setPath(Path path){
         this.path = path;

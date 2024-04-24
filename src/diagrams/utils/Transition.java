@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Objects;
 
 public class Transition
         extends Edge<Transition>
@@ -20,10 +21,17 @@ public class Transition
 
     private String text = "";
 
-    public Transition(BaseNode<?, ?> from, BaseNode<?, ?> to) {
+    private EdgeStyle style;
+
+    public Transition(BaseNode<?, ?> from, BaseNode<?, ?> to, EdgeStyle style) {
         super(null, null);
         this.from = from;
         this.to = to;
+        this.style = style;
+    }
+
+    public Transition(BaseNode<?, ?> from, BaseNode<?, ?> to) {
+        this(from, to, new OpenArrow(new PlainLine()));
     }
 
     public BaseNode<?, ?> getFrom() {
@@ -77,6 +85,14 @@ public class Transition
         }
     }
 
+    public EdgeStyle getStyle() {
+        return style;
+    }
+
+    public void setStyle(EdgeStyle style) {
+        this.style = Objects.requireNonNull(style);
+    }
+
     private Shape getCyclicEdgePath(){
         Component v = from.getView();
         Point c = GeomUtils.getCenter(v.getBounds());
@@ -123,7 +139,7 @@ public class Transition
         Point p = from.getNearestPointOnOutline(GeomUtils.getCenter(to.getView().getBounds()));
         Point q = to.getNearestPointOnOutline(GeomUtils.getCenter(from.getView().getBounds()));
 
-        new OpenArrow(new PlainLine()).paintEdge(g, p, q);
+        style.paintEdge(g, p, q);
 
         GeomUtils.paintStringInBetween(g, p, q, text);
     }

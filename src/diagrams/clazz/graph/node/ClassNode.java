@@ -1,6 +1,5 @@
 package diagrams.clazz.graph.node;
 
-import diagram.store.DiagramData;
 import graph.Node;
 import graph.NodeModel;
 import mvc.IView;
@@ -16,8 +15,8 @@ public class ClassNode
         extends JPanel
         implements Node<ClassNode, ClassNode>, IView, NodeModel {
 
-
     private long id;
+
     private boolean hasFocus = false;
 
 
@@ -30,6 +29,8 @@ public class ClassNode
     private final ObservedList<Attribute> attributes = new ObservedList<>(new ArrayList<>());
 
     private final ObservedList<Method> methods = new ObservedList<>(new ArrayList<>());
+
+    private String description = "";
 
 
     public ClassNode(ClassType classType, String name){
@@ -96,6 +97,14 @@ public class ClassNode
 
     public List<Method> getMethods() {
         return methods;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
