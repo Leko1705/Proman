@@ -7,6 +7,9 @@ import graph.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class DiagramViewPanel extends GraphPanel {
 
@@ -127,7 +130,7 @@ public class DiagramViewPanel extends GraphPanel {
                 }
                 else {
 
-                    if (edgeExist(processedConnection.getFrom(), classNode)) {
+                    if (edgeExist(processedConnection.getFrom(), classNode)){
                         removeEdge(processedConnection);
                         processedConnection = null;
                         return;
@@ -207,6 +210,48 @@ public class DiagramViewPanel extends GraphPanel {
         connection.addEdgeChangeListener(ON_EDGE_CHANGE);
     }
 
+    @Override
+    public void addEdge(Edge<?> edge) {
+        super.addEdge(edge);
+        updateDependencyCycles();
+    }
+
+    @Override
+    public void removeEdge(Edge<?> edge) {
+        super.removeEdge(edge);
+        updateDependencyCycles();
+    }
+
+    private void updateDependencyCycles(){
+        Map<Long, Map<Long, Connection>> connections = new HashMap<>();
+
+        for (Edge<?> edge : getEdges()){
+            long from = edge.getModel().getFromID();
+            long to = edge.getModel().getToID();
+
+            if (!connections.containsKey(from)) {
+                Connection c = (Connection) edge;
+                c.setCircularDependence(false);
+                connections.put(from, new HashMap<>(Map.of(to, c)));
+            }
+            else {
+                Connection c = (Connection) edge;
+                c.setCircularDependence(false);
+                Map<Long, Connection> neighbours = connections.get(from);
+                neighbours.put(to, c);
+            }
+
+            if (connections.containsKey(to) && connections.get(to).containsKey(from)){
+                Connection reverse = connections.get(to).get(from);
+                Connection forward = connections.get(from).get(to);
+
+                forward.setCircularDependence(true);
+                reverse.setCircularDependence(true);
+            }
+        }
+
+        repaint();
+    }
 
     private ClassNode cloneNode(ClassNode given){
         ClassNode newNode = createClassNode(given.getClassType(), given.getClassName());

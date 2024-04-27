@@ -6,5 +6,5 @@ public interface EdgeStyle {
 
     double ANGULATION = 25;
 
-    void paintEdge(Graphics g, Point from, Point to);
+    void paintEdge(Graphics g, Shape shape);
 }

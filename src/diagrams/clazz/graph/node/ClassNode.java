@@ -146,7 +146,7 @@ public class ClassNode
 
         g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 
-        height += 15;
+        height += 10;
 
         g.drawRect(0, 0, getWidth(), height);
 
@@ -198,7 +198,7 @@ public class ClassNode
             height += 17;
         }
 
-        height += 15;
+        height += 5;
 
         setSize(getMinimumWidth(longestString) + 50, height);
     }

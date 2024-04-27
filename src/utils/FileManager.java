@@ -1,7 +1,7 @@
 package utils;
 
-import diagram.store.DataFactory;
-import diagram.store.XMLDataFactory;
+import data.DataFactory;
+import data.serial.SerialDataFactory;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ public class FileManager {
 
     private static FileManager manager = null;
 
-    private final DataFactory dataFactory = new XMLDataFactory();
+    private final DataFactory dataFactory = new SerialDataFactory();
 
 
     public static FileManager getManager(){

@@ -1,7 +1,7 @@
-package diagram.store;
+package data;
 
-import mylib.format.Format;
-
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
 
 public interface DataFactory {
@@ -10,5 +10,8 @@ public interface DataFactory {
                     String kind,
                     int version);
 
-    Format getFormat();
+    Data load(InputStream in);
+
+    void save(Data data, OutputStream out);
+
 }

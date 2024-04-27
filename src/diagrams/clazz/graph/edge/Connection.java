@@ -1,19 +1,19 @@
 package diagrams.clazz.graph.edge;
 
+import diagrams.utils.Transitions;
 import graph.*;
 import graph.Edge;
 import utils.GeomUtils;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 import java.util.*;
 
 public class Connection
         extends Edge<Connection>
         implements EdgeModel, EdgeView<Connection>, EdgeModelPainter<Connection> {
 
-    private static final int LINE_CLICK_BOUNDS = 12;
+    private static final int CYCLE_OFFSET = 35;
 
 
     private Node<?, ?> from, to;
@@ -30,12 +30,22 @@ public class Connection
 
     private String rightText = "";
 
+    private boolean straightLine = true;
+
+
+    // are two nodes connected to each other?
+    private boolean circularDependence = false;
+
 
     public Connection(Node<?, ?> from, Node<?, ?> to, EdgeStyle style) {
         super(null, null);
         this.from = Objects.requireNonNull(from);
         this.to = Objects.requireNonNull(to);
         this.style = Objects.requireNonNull(style);
+    }
+
+    public void setCircularDependence(boolean circularDependence) {
+        this.circularDependence = circularDependence;
     }
 
     public void setStyle(EdgeStyle style) {
@@ -130,9 +140,29 @@ public class Connection
 
     @Override
     public void paintEdge(Graphics g, Shape shape) {
-        Point p = GeomUtils.closestPointOnRectTo(from.getView().getBounds(), to.getView().getBounds());
-        Point q = GeomUtils.closestPointOnRectTo(to.getView().getBounds(), from.getView().getBounds());
-        style.paintEdge(g, p, q);
+        if (straightLine){
+
+            Point p = GeomUtils.closestPointOnRectTo(from.getView().getBounds(), to.getView().getBounds());
+            Point q = GeomUtils.closestPointOnRectTo(to.getView().getBounds(), from.getView().getBounds());
+
+            if (circularDependence){
+               Point m = GeomUtils.getCenter(p, q);
+               double angle = GeomUtils.calcAngle(p, m);
+               Point c = GeomUtils.calculatePointOnCircle(m, angle + 90, 20);
+               Path2D path = new Path2D.Double();
+               path.moveTo(p.x, p.y);
+               path.lineTo(c.x, c.y);
+               path.lineTo(q.x, q.y);
+               style.paintEdge(g, path);
+               // ((Graphics2D) g).draw(path.getBounds());
+            }
+            else {
+                style.paintEdge(g, new Line2D.Double(p, q));
+            }
+        }
+        else {
+            style.paintEdge(g, shape);
+        }
     }
 
     public void changeDirection() {
@@ -143,38 +173,75 @@ public class Connection
     }
 
     public Shape getEdgePath(Node<?, ?> from, Node<?, ?> to){
+        if (from == to){
+            straightLine = false;
+            return getCyclicShape(from);
+        }
+        else {
+            straightLine = true;
+            return getDirectConnectionShape(from, to);
+        }
+    }
+
+    private Shape getCyclicShape(Node<?, ?> from){
+        Path2D path = new Path2D.Double();
+
+        Component node = from.getView();
+
+        Point p1 = node.getLocation();
+        p1.translate(node.getWidth(), node.getHeight()/2);
+
+        Point p2 = p1.getLocation();
+        p2.translate(CYCLE_OFFSET, 0);
+
+        Point p3 = p2.getLocation();
+        p3.translate(0, -(node.getHeight()/2 + CYCLE_OFFSET + 10));
+
+        Point p4 = node.getLocation();
+        p4.translate(node.getWidth()/2, -(CYCLE_OFFSET + 10));
+
+        Point p5 = node.getLocation();
+        p5.translate(node.getWidth()/2, 0);
+
+        path.moveTo(p1.x, p1.y);
+        path.lineTo(p2.x, p2.y);
+        path.lineTo(p3.x, p3.y);
+        path.lineTo(p4.x, p4.y);
+        path.lineTo(p5.x, p5.y);
+        return path;
+    }
+
+    private Shape getDirectConnectionShape(Node<?, ?> from, Node<?, ?> to){
         Point p = GeomUtils.closestPointOnRectTo(from.getView().getBounds(), to.getView().getBounds());
         Point q = GeomUtils.closestPointOnRectTo(to.getView().getBounds(), from.getView().getBounds());
 
-        double angle = GeomUtils.calcAngle(p, q);
-
-        int distance = (int) Math.sqrt(Math.pow(q.x - p.x, 2) + Math.pow(q.y - p.y, 2));
-
-        int fromX = Math.min(p.x, q.x);
-        int fromY = Math.min(p.y, q.y);
-
-        Rectangle r = new Rectangle(fromX - LINE_CLICK_BOUNDS, fromY - LINE_CLICK_BOUNDS, distance + LINE_CLICK_BOUNDS, LINE_CLICK_BOUNDS * 2);
-
-        AffineTransform rotateTransform = AffineTransform.getRotateInstance((angle*2*Math.PI)/360d);
-        // rotate the original shape with no regard to the final bounds
-        Shape rotatedShape = rotateTransform.createTransformedShape(r);
-        // get the bounds of the rotated shape
-        Rectangle2D rotatedRect = rotatedShape.getBounds2D();
-        // calculate the x,y offset needed to shift it to top/left bounds of original rectangle
-        double xOff = r.getX()-rotatedRect.getX();
-        double yOff = r.getY()-rotatedRect.getY();
-        AffineTransform translateTransform = AffineTransform.getTranslateInstance(xOff, yOff);
-        // shift the new shape to the top left of original rectangle
-        return translateTransform.createTransformedShape(rotatedShape);
+        return Transitions.createClickableLine(p, q);
     }
 
     public void paintModel(Graphics g, Connection model){
-        Point p = GeomUtils.closestPointOnRectTo(from.getView().getBounds(), to.getView().getBounds());
-        Point q = GeomUtils.closestPointOnRectTo(to.getView().getBounds(), from.getView().getBounds());
-        GeomUtils.paintStringInBetween(g, p, q, getCenterText());
 
-        putEdgeString(g, p, q, leftText);
-        putEdgeString(g, q, p, rightText);
+        if (from == to) {
+            Component v = from.getView();
+            Point p = v.getLocation();
+            p.translate(v.getWidth(), v.getHeight()/2);
+            g.drawString(leftText, p.x + 5, p.y + 15);
+
+            p.translate(CYCLE_OFFSET, 0);
+            p.translate(0, -(v.getHeight()/2 + CYCLE_OFFSET + 10));
+            g.drawString(centerText, p.x + 5, p.y);
+
+            p = v.getLocation();
+            p.translate(v.getWidth()/2, 0);
+            g.drawString(rightText, p.x + 10, p.y - 10);
+        }
+        else {
+            Point p = GeomUtils.closestPointOnRectTo(from.getView().getBounds(), to.getView().getBounds());
+            Point q = GeomUtils.closestPointOnRectTo(to.getView().getBounds(), from.getView().getBounds());
+            GeomUtils.paintStringInBetween(g, p, q, getCenterText());
+
+            putEdgeString(g, p, q, leftText);
+            putEdgeString(g, q, p, rightText);
+        }
     }
 
     private void putEdgeString(Graphics g, Point p, Point q, String text){

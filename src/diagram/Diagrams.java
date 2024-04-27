@@ -4,6 +4,7 @@ import diagrams.entityRel.ERDiagramFactory;
 import diagrams.flow.FlowchartDiagramFactory;
 import diagrams.clazz.UMLClassDiagramFactory;
 import diagrams.state.UMLStateDiagramFactory;
+import diagrams.usecase.UsecaseDiagramFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +27,14 @@ public final class Diagrams {
     public static final String KEY_SEQUENCE_DIAGRAM = "sequence.diagram";
     public static final String KEY_FLOW_CHART = "flow.chart.diagram";
     public static final String KEY_ENTITY_RELATIONSHIP_DIAGRAM = "entity.relationship.diagram";
+    public static final String KEY_UML_USECASE_DIAGRAM = "usecase.diagram";
 
 
 
     private static void init(){
         addDiagramFactory(KEY_UML_CLASS_DIAGRAM, new UMLClassDiagramFactory());
         addDiagramFactory(KEY_UML_STATE_DIAGRAM, new UMLStateDiagramFactory());
+        addDiagramFactory(KEY_UML_USECASE_DIAGRAM, new UsecaseDiagramFactory());
         addDiagramFactory(KEY_FLOW_CHART, new FlowchartDiagramFactory());
         addDiagramFactory(KEY_ENTITY_RELATIONSHIP_DIAGRAM, new ERDiagramFactory());
     }

@@ -2,7 +2,7 @@ package diagrams.entityRel;
 
 import context.Context;
 import diagram.Diagram;
-import diagram.store.DiagramData;
+import data.Data;
 
 import java.awt.*;
 
@@ -13,7 +13,7 @@ public class ERDiagram extends Diagram<Void> {
     }
 
     @Override
-    public void onCreate(DiagramData data) {
+    public void onCreate(Data data) {
         setLayout(new BorderLayout());
 
         DiagramViewPanel viewPanel = new DiagramViewPanel();

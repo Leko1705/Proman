@@ -1,16 +1,16 @@
-package diagrams.flow;
+package diagrams.usecase;
 
 import context.Context;
-import diagram.Diagram;
 import data.Data;
+import diagram.Diagram;
 
 import java.awt.*;
 
-public class FlowchartDiagram extends Diagram<Void> {
+public class UsecaseDiagram extends Diagram<Void> {
 
     private Component exportableComponent;
 
-    protected FlowchartDiagram(Context<?, ?> context) {
+    protected UsecaseDiagram(Context<?, ?> context) {
         super(context);
     }
 

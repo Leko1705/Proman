@@ -2,6 +2,7 @@ package utils;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 
 public final class GeomUtils {
 
@@ -64,12 +65,12 @@ public final class GeomUtils {
         return new Point(x, y);
     }
 
-    public static Point calculatePointOnCircle(Point center, double angle, double r){
+    public static Point calculatePointOnCircle(Point2D center, double angle, double r){
         double rad = Math.toRadians(angle);
         double dx = Math.cos(rad);
         double dy = Math.sin(rad);
-        double nx = (center.x + dx * r);
-        double ny = (center.y + dy * r);
+        double nx = (center.getX() + dx * r);
+        double ny = (center.getY() + dy * r);
         return new Point((int) nx, (int) ny);
     }
 
@@ -84,8 +85,8 @@ public final class GeomUtils {
         return Math.sqrt(Math.pow(q.x - p.x, 2) + Math.pow(p.y - q.y, 2));
     }
 
-    public static double calcAngle(Point p, Point q){
-        return Math.toDegrees(Math.atan2(q.y - p.y, q.x - p.x));
+    public static double calcAngle(Point2D p, Point2D q){
+        return Math.toDegrees(Math.atan2(q.getY() - p.getY(), q.getX() - p.getX()));
     }
 
 }

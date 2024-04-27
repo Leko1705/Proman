@@ -32,7 +32,7 @@ public class DiagramViewPanel extends GraphEditorPanel {
 
     @Override
     public Edge<?> onNewConnectionEstablished(Node<?, ?> from, Node<?, ?> to) {
-        return new Transition((BaseNode<?, ?>) from, (BaseNode<?, ?>) to, new PlainLine());
+        return new Transition((BaseNode<?, ?>) from, (BaseNode<?, ?>) to);
     }
 
 
@@ -77,7 +77,7 @@ public class DiagramViewPanel extends GraphEditorPanel {
         public NodePopUpMenu(BaseNode<?, ?> node) {
 
                 JMenuItem connectItem = new JMenuItem("connect");
-                connectItem.addActionListener(e -> startConnectionProcess(new Transition(node, MOUSE_POINT_END, new PlainLine())));
+                connectItem.addActionListener(e -> startConnectionProcess(new Transition(node, MOUSE_POINT_END)));
                 add(connectItem);
 
             JMenuItem removeItem = new JMenuItem("remove");

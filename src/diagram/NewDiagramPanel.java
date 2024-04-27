@@ -1,7 +1,7 @@
 package diagram;
 
 import context.Context;
-import diagram.store.DataFactory;
+import data.DataFactory;
 import utils.FileManager;
 
 import javax.swing.*;

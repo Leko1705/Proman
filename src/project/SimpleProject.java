@@ -2,7 +2,7 @@ package project;
 
 import context.Context;
 import diagram.*;
-import diagram.store.BackgroundService;
+import utils.BackgroundService;
 import mylib.swingx.JComponentRecycler;
 import utils.DirectoryChangeAdapter;
 import utils.DirectoryWatcher;
@@ -151,7 +151,8 @@ public class SimpleProject extends Project<DiagramOpenIntent> {
 
     @Override
     public void close() {
-        diagramWatcher.cancel(true);
+        if (diagramWatcher != null)
+            diagramWatcher.cancel(true);
         BackgroundService.cancelService();
         super.close();
     }

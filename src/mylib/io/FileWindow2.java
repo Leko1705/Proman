@@ -62,7 +62,7 @@ public class FileWindow2 {
 
             if (path != null) {
                 try {
-                    Files.copy(file.toPath(),
+                    Files.copy(file.toPath().toAbsolutePath(),
                             (new File(path + getFile())).toPath(),
                             StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception e) {

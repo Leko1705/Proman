@@ -2,16 +2,14 @@ package diagram;
 
 import context.BaseContext;
 import context.Context;
-import diagram.store.BackgroundService;
-import diagram.store.DiagramData;
+import utils.BackgroundService;
+import data.Data;
 
 import javax.swing.*;
 import java.awt.*;
 import java.nio.file.Path;
-import java.util.Deque;
-import java.util.concurrent.LinkedBlockingDeque;
 
-public abstract class Diagram<V> extends BaseContext<DiagramData, V> {
+public abstract class Diagram<V> extends BaseContext<Data, V> {
 
     private Path path;
 
@@ -19,7 +17,7 @@ public abstract class Diagram<V> extends BaseContext<DiagramData, V> {
         super(context);
     }
 
-    public abstract void onCreate(DiagramData data);
+    public abstract void onCreate(Data data);
 
     public Component getExportableComponent(){
         return this;

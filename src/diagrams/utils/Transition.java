@@ -8,6 +8,7 @@ import utils.GeomUtils;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 
@@ -15,23 +16,14 @@ public class Transition
         extends Edge<Transition>
         implements EdgeModel, EdgeView<Transition>, EdgeModelPainter<Transition> {
 
-    private static final int LINE_CLICK_BOUNDS = 12;
-
     private final BaseNode<?, ?> from, to;
 
     private String text = "";
 
-    private EdgeStyle style;
-
-    public Transition(BaseNode<?, ?> from, BaseNode<?, ?> to, EdgeStyle style) {
+    public Transition(BaseNode<?, ?> from, BaseNode<?, ?> to) {
         super(null, null);
         this.from = from;
         this.to = to;
-        this.style = style;
-    }
-
-    public Transition(BaseNode<?, ?> from, BaseNode<?, ?> to) {
-        this(from, to, new OpenArrow(new PlainLine()));
     }
 
     public BaseNode<?, ?> getFrom() {
@@ -85,14 +77,6 @@ public class Transition
         }
     }
 
-    public EdgeStyle getStyle() {
-        return style;
-    }
-
-    public void setStyle(EdgeStyle style) {
-        this.style = Objects.requireNonNull(style);
-    }
-
     private Shape getCyclicEdgePath(){
         Component v = from.getView();
         Point c = GeomUtils.getCenter(v.getBounds());
@@ -103,26 +87,7 @@ public class Transition
         Point p = from.getNearestPointOnOutline(GeomUtils.getCenter(to.getView().getBounds()));
         Point q = to.getNearestPointOnOutline(GeomUtils.getCenter(from.getView().getBounds()));
 
-        double angle = GeomUtils.calcAngle(p, q);
-
-        int distance = (int) Math.sqrt(Math.pow(q.x - p.x, 2) + Math.pow(q.y - p.y, 2));
-
-        int fromX = Math.min(p.x, q.x);
-        int fromY = Math.min(p.y, q.y);
-
-        Rectangle r = new Rectangle(fromX - LINE_CLICK_BOUNDS, fromY - LINE_CLICK_BOUNDS, distance + LINE_CLICK_BOUNDS, LINE_CLICK_BOUNDS * 2);
-
-        AffineTransform rotateTransform = AffineTransform.getRotateInstance((angle*2*Math.PI)/360d);
-        // rotate the original shape with no regard to the final bounds
-        Shape rotatedShape = rotateTransform.createTransformedShape(r);
-        // get the bounds of the rotated shape
-        Rectangle2D rotatedRect = rotatedShape.getBounds2D();
-        // calculate the x,y offset needed to shift it to top/left bounds of original rectangle
-        double xOff = r.getX()-rotatedRect.getX();
-        double yOff = r.getY()-rotatedRect.getY();
-        AffineTransform translateTransform = AffineTransform.getTranslateInstance(xOff, yOff);
-        // shift the new shape to the top left of original rectangle
-        return translateTransform.createTransformedShape(rotatedShape);
+        return Transitions.createClickableLine(p, q);
     }
 
     @Override
@@ -139,7 +104,8 @@ public class Transition
         Point p = from.getNearestPointOnOutline(GeomUtils.getCenter(to.getView().getBounds()));
         Point q = to.getNearestPointOnOutline(GeomUtils.getCenter(from.getView().getBounds()));
 
-        style.paintEdge(g, p, q);
+        EdgeStyle styledPainter = new OpenArrow(new PlainLine());
+        styledPainter.paintEdge(g, new Line2D.Double(p, q));
 
         GeomUtils.paintStringInBetween(g, p, q, text);
     }

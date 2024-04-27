@@ -1,4 +1,4 @@
-package diagram.store;
+package utils;
 
 import javax.swing.*;
 import java.util.Deque;
@@ -39,7 +39,12 @@ public class BackgroundService extends SwingWorker<Void, Void> {
             while (running && tasks.isEmpty()) Thread.onSpinWait();
             if (running) {
                 Runnable task = tasks.removeLast();
-                task.run();
+                try {
+                    task.run();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
         return null;
