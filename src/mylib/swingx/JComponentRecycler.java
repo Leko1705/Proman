@@ -4,12 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class JComponentRecycler extends JScrollPane implements Iterable<Component> {
 
     private final Box viewBox = new Box(BoxLayout.Y_AXIS);
 
-    private final ArrayList<Component> components = new ArrayList<>();
+    private final List<Component> components = new ArrayList<>();
 
     public JComponentRecycler(){
         setViewportView(viewBox);

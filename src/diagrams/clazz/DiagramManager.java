@@ -9,9 +9,11 @@ import diagrams.clazz.graph.node.Attribute;
 import diagrams.clazz.graph.node.ClassNode;
 import diagrams.clazz.graph.node.Method;
 import diagrams.clazz.graph.node.Parameter;
+import diagrams.utils.TextLabelNode;
 import graph.Edge;
 import graph.GraphPanel;
 import graph.Node;
+import graph.TextNode;
 import utils.FileManager;
 import utils.ProxyPanel;
 
@@ -82,12 +84,14 @@ public class DiagramManager {
 
     public void writeDataToFile(){
         diagram.updateDiagramFiles(() -> {
-            data.getContent().getChildren().clear();
+            Content root = data.getContent().getOrCreateChild("content");
+            root.clear();
 
             int classTagID = 0;
+            int textTagID = 0;
             for (Node<?, ?> node : graphPanel.getNodes()) {
                 if (node instanceof ClassNode cNode) {
-                    Content classContent = data.getContent().getOrCreateChild("class_" + classTagID++);
+                    Content classContent = root.getOrCreateChild("class_" + classTagID++);
 
                     classContent.getOrCreateChild("type").setValue(cNode.getClassType().getTextFormat());
                     classContent.getOrCreateChild("name").setValue(cNode.getClassName());
@@ -128,13 +132,20 @@ public class DiagramManager {
                         }
                     }
                 }
+                else if (node instanceof TextLabelNode labelNode){
+                    Content classContent = root.getOrCreateChild("text_" + textTagID++);
+                    classContent.getOrCreateChild("content").setValue(labelNode.getText());
+                    classContent.getOrCreateChild("id").setValue(Long.toString(labelNode.getID()));
+                    classContent.getOrCreateChild("pos").getOrCreateChild("x").setValue(Integer.toString(labelNode.getX()));
+                    classContent.getChild("pos").getOrCreateChild("y").setValue(Integer.toString(labelNode.getY()));
+                }
             }
 
             int edgeTagID = 0;
             for (Edge<?> edge : graphPanel.getEdges()) {
                 Connection connection = (Connection) edge;
 
-                Content edgeContent = data.getContent().getOrCreateChild("edge_" + edgeTagID++);
+                Content edgeContent = root.getOrCreateChild("edge_" + edgeTagID++);
                 edgeContent.getOrCreateChild("from").setValue(Long.toString(connection.getFromID()));
                 edgeContent.getOrCreateChild("to").setValue(Long.toString(connection.getToID()));
                 edgeContent.getOrCreateChild("left").setValue(connection.getLeftText());

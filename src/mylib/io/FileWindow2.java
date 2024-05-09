@@ -62,8 +62,10 @@ public class FileWindow2 {
 
             if (path != null) {
                 try {
+                    File newFile = new File(path + getFile());
+                    newFile.createNewFile();
                     Files.copy(file.toPath().toAbsolutePath(),
-                            (new File(path + getFile())).toPath(),
+                            (newFile).toPath(),
                             StandardCopyOption.REPLACE_EXISTING);
                 } catch (Exception e) {
                     e.printStackTrace();

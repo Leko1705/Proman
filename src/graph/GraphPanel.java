@@ -1,15 +1,11 @@
 package graph;
 
-import mvc.Controller;
 import mvc.IView;
 import mylib.swingx.JDragPanel;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.geom.Path2D;
+import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.util.*;
 
 public class GraphPanel
@@ -25,9 +21,8 @@ public class GraphPanel
 
     private final Set<EdgeClickListener> edgeClickListeners = new HashSet<>();
 
-
     public GraphPanel(){
-        super(true);
+        super(true, true);
         setOpaque(true);
 
         addMouseListener(new MouseAdapter() {
@@ -37,6 +32,14 @@ public class GraphPanel
                     handlePotentialLineClick(edge, e);
             }
         });
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                repaint();
+            }
+        });
+
     }
 
     private <M extends EdgeModel> Shape getEdgeShape(Edge<M> edge){
@@ -104,7 +107,12 @@ public class GraphPanel
         nodes.put(model.getID(), node);
         Component view = node.getView();
 
-        view.addMouseMotionListener(new MouseMotionAdapter() {
+        view.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                repaint();
+            }
+
             @Override
             public void mouseDragged(MouseEvent e) {
                 repaint();

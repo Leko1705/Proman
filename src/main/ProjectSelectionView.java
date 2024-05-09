@@ -61,7 +61,7 @@ public class ProjectSelectionView extends JPanel {
     }
 
     private void addProject(Path projectPath){
-        recycler.add(new ProjectCell(context, projectPath));
+        recycler.add(new ProjectCell(context, projectPath, recycler));
     }
 
 }

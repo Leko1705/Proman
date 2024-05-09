@@ -24,14 +24,7 @@ public interface Content {
 
     Content getOrCreateChild(String child);
 
-    default Content removeChild(String tag) {
-        for (int i = 0; i < this.getChildren().size(); i++) {
-            if (this.getChildren().get(i).getTag().equals(tag)) {
-                return this.getChildren().remove(i);
-            }
-        }
-        return null;
-    }
+    void clear();
 
     List<Content> getChildren();
 

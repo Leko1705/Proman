@@ -69,6 +69,11 @@ class SerialData implements Data, Serializable {
         }
 
         @Override
+        public void clear() {
+            children.clear();
+        }
+
+        @Override
         public List<Content> getChildren() {
             return children;
         }

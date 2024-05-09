@@ -6,6 +6,7 @@ import diagram.Diagram;
 import data.Data;
 import diagrams.clazz.graph.edge.Connection;
 import diagrams.clazz.graph.node.*;
+import diagrams.utils.TextLabelNode;
 import utils.ProxyPanel;
 
 import javax.swing.*;
@@ -47,7 +48,7 @@ public class ClassDiagram extends Diagram<Void> {
     }
 
     private void loadData(Data data, DiagramViewPanel graph){
-        Content dataContent = data.getContent();
+        Content dataContent = data.getContent().getOrCreateChild("content");
 
         for (Content child : dataContent.getChildren()) {
             String tag = child.getTag();
@@ -109,6 +110,14 @@ public class ClassDiagram extends Diagram<Void> {
                 }
 
                 graph.addNode(classNode, false);
+            }
+            else if (tag != null && tag.startsWith("text")){
+                String content = child.getChild("content").getValue();
+                int x = Integer.parseInt(child.getChild("pos").getChild("x").getValue());
+                int y = Integer.parseInt(child.getChild("pos").getChild("y").getValue());
+                TextLabelNode labelNode = new TextLabelNode(graph, content);
+                labelNode.setLocation(x, y);
+                graph.addNode(labelNode, false);
             }
         }
 

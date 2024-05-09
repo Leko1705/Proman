@@ -1,6 +1,7 @@
 package main;
 
 import context.Context;
+import mylib.swingx.JComponentRecycler;
 import project.Project;
 import project.SimpleProject;
 import utils.FileManager;
@@ -17,10 +18,12 @@ public class ProjectCell extends JPanel {
 
     private final Context<?, ?> context;
     private final Path path;
+    private final JComponentRecycler recycler;
 
-    public ProjectCell(Context<?, ?> context, Path path){
+    public ProjectCell(Context<?, ?> context, Path path, JComponentRecycler recycler){
         this.context = context;
         this.path = path;
+        this.recycler = recycler;
         setLayout(new BorderLayout());
         add(new JLabel(FileManager.getManager().getFileName(path, false), JLabel.CENTER), BorderLayout.CENTER);
         addMouseListener(new MouseAdapter() {
@@ -58,11 +61,9 @@ public class ProjectCell extends JPanel {
         public ProjectPopUpMenu() {
             JMenuItem removeItem = new JMenuItem("remove");
             removeItem.addActionListener(e -> {
-                try {
-                    Files.delete(path);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                path.toFile().delete();
+                recycler.remove(this);
+                SwingUtilities.invokeLater(recycler::repaint);
             });
             add(removeItem);
         }

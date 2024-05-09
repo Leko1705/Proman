@@ -61,7 +61,7 @@ public class RoundRectTextNode extends TextNode implements BaseNode<TextNode, Te
         qualityHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2.setRenderingHints( qualityHints);
 
-        RoundRectangle2D rect = new RoundRectangle2D.Double(0, 0, getWidth()-1, getHeight()-1, arcw, arch);
+        RoundRectangle2D rect = new RoundRectangle2D.Double(1, 1, getWidth()-2, getHeight()-2, arcw, arch);
         Color c = g.getColor();
 
         if (fillColor != null) {

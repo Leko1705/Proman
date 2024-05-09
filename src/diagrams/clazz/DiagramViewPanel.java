@@ -2,6 +2,7 @@ package diagrams.clazz;
 
 import diagrams.clazz.graph.edge.*;
 import diagrams.clazz.graph.node.*;
+import diagrams.utils.TextLabelNode;
 import graph.*;
 
 import javax.swing.*;
@@ -93,23 +94,31 @@ public class DiagramViewPanel extends GraphPanel {
             addClass.addActionListener( e -> {
                 ClassNode classNode = createClassNode(ClassType.CLASS, "Untitled");
                 classNode.setFocused(true);
-                addNewComponent(classNode);
+                addNewComponent(classNode, true);
                 manager.setSideBar(new ClassNodePropertyPanel(classNode));
             });
             addMenu.add(addClass);
+
+            JMenuItem textItem = new JMenuItem("text");
+            textItem.addActionListener(e -> {
+                TextLabelNode labelNode = new TextLabelNode(DiagramViewPanel.this, "text");
+                addNewComponent(labelNode, false);
+            });
+            addMenu.add(textItem);
 
             add(addMenu);
         }
 
 
 
-        private void addNewComponent(Node<?, ?> node){
+        private void addNewComponent(Node<?, ?> node, boolean foldOutPanel){
             Point location = mousePos.getLocation();
             location.translate(-(node.getView().getWidth()/2), -node.getView().getHeight()/2);
             node.getView().setLocation(location);
             addNode(node);
             manager.setFocused(node);
-            manager.foldOutProperties();
+            if (foldOutPanel)
+                manager.foldOutProperties();
         }
 
     }
