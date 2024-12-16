@@ -24,6 +24,7 @@ public class BackgroundService extends SwingWorker<Void, Void> {
     }
 
     public static void cancelService(){
+        if (updater == null) return;
         updater.running = false;
         updater = null;
     }
